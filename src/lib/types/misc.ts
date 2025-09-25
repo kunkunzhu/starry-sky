@@ -22,3 +22,13 @@ export interface StarData {
     message: string
     public: boolean
 }
+
+export interface StarRecord {
+    id: number
+    notion_id: string
+    title: string | null
+    message: string
+    public: boolean
+    created_at: Date
+    updated_at: Date
+}
