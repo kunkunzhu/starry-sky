@@ -1,6 +1,6 @@
 import { Client } from '@notionhq/client'
-import { StarData } from '../types/misc'
-import { NotionPage } from '../types/notion'
+import { StarData } from './types/misc'
+import { NotionPage } from './types/notion'
 
 const notion = new Client({
     auth: process.env.NOTION_TOKEN,

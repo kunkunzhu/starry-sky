@@ -29,6 +29,4 @@ export interface StarRecord {
     title: string | null
     message: string
     public: boolean
-    created_at: Date
-    updated_at: Date
 }
