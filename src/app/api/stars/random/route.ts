@@ -14,7 +14,7 @@ export async function GET() {
 
         if (randomStar.length === 0) {
             return NextResponse.json(
-                { error: '⚠️ no posts found' },
+                { error: '⚠️ no stars found' },
                 { status: 404 }
             );
         }

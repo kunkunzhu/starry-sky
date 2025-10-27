@@ -3,7 +3,7 @@ import { StarData } from '../types/misc';
 import { NotionPage } from '../types/notion';
 
 const notion = new Client({
-    auth: process.env.NOTION_API_KEY,
+    auth: process.env.NOTION_TOKEN,
 });
 
 export class NotionService {

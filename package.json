@@ -7,9 +7,10 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
-    "db:init": "tsx src/scripts/init-neon-db.ts",
-    "db:sync": "tsx src/scripts/init-neon-db.ts --sync",
-    "db:reset": "tsx src/scripts/init-neon-db.ts --reset --sync"
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio",
+    "db:push": "drizzle-kit push"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.1",
@@ -17,13 +18,16 @@
     "@types/p5": "^1.7.6",
     "@types/pg": "^8.15.5",
     "@vercel/postgres": "^0.10.0",
+    "dotenv": "^17.2.3",
     "drizzle-kit": "^0.31.5",
     "drizzle-orm": "^0.44.5",
+    "framer-motion": "^12.23.22",
     "next": "15.5.2",
     "p5": "^2.0.5",
     "pg": "^8.16.3",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "suncalc": "^1.9.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
