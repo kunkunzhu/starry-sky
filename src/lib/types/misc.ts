@@ -30,3 +30,17 @@ export interface StarRecord {
     message: string
     public: boolean
 }
+
+export interface P5CursorGlow {
+    x: number
+    y: number
+    targetX: number
+    targetY: number
+    size: number
+    easing: number
+
+    ease: () => void
+    glow: () => void
+    pulse: () => void
+    brighten: () => void
+}

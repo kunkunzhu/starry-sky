@@ -1,30 +1,115 @@
 'use client'
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import p5 from 'p5'
-import { P5Star } from '@/lib/types/misc';
+import { P5Star, StarData, P5CursorGlow } from '@/lib/types/misc';
+import { getRandomStar } from '@/lib/services/star';
+import Star from './Star';
+// import { testStar } from '@/lib/data/test';
 
 export default function StarField() {
     const sketchRef = useRef<HTMLDivElement>(null)
 
-    // const [message, setMessage] = React.useState<string | null>(null)
+    const [star, setStar] = useState<StarData | null>(null)
+    const [showStar, setShowStar] = useState<boolean>(false)
+    const [isVisible, setIsVisible] = useState<boolean>(false)
+    const [isHovered, setIsHovered] = useState<boolean>(false)
+
+    // star fetching :
+
+    const fetchRandomStar = useCallback(async () => {
+        try {
+            const star: StarData | null = await getRandomStar();
+            setStar(star);
+        } catch (error) {
+            console.error("⚠️ error fetching random star:", error);
+        }
+    }, [])
+
+    useEffect(() => {
+        setShowStar(true)
+        setIsVisible(true)
+
+        if (isHovered) return
+
+        const fadeTimer = setTimeout(() => {
+            setIsVisible(false);
+        }, 5000);
+
+        const hideTimer = setTimeout(() => {
+
+            setShowStar(false);
+            setStar(null)
+        }, 5500);
+
+        return () => {
+            clearTimeout(fadeTimer);
+            clearTimeout(hideTimer);
+        }
+    }, [star, isHovered])
+
+    // p5.js setup :
 
     useEffect(() => {
         if (!sketchRef.current) return
 
         const sketch = (p: p5) => {
             const stars: P5Star[] = []
+            let sky: p5.Graphics
+            let cursorGlow: P5CursorGlow
             const numStars = 75
+
+            const createSky = (p: p5) => {
+                const pg = p.createGraphics(p.width, p.height);
+
+                pg.pixelDensity(1)
+                pg.loadPixels();
+
+                const w = pg.width;
+                const h = pg.height;
+
+                for (let y = 0; y < h; y++) {
+                    for (let x = 0; x < w; x++) {
+                        const i = (y * w + x) * 4;
+                        const t = y / h;
+
+                        const red = p.lerp(8, 15, t);
+                        const green = p.lerp(3, 8, t);
+                        const blue = p.lerp(30, 50, t);
+                        const grain = p.random(-10, 10);
+
+                        pg.pixels[i] = red + grain;
+                        pg.pixels[i + 1] = green + grain;
+                        pg.pixels[i + 2] = blue + grain;
+                        pg.pixels[i + 3] = 255;
+                    }
+                }
+
+                pg.updatePixels();
+
+                return pg;
+            }
 
             p.setup = () => {
                 p.createCanvas(p.windowWidth, p.windowHeight)
+                console.log("screen dim:", p.windowWidth, p.windowHeight);
+                sky = createSky(p);
+
+                cursorGlow = new CursorGlow(p)
+
                 for (let i = 0; i < numStars; i++) {
                     stars.push(new Star(p))
                 }
             }
 
             p.draw = () => {
-                p.background(8, 3, 30, 50);
+                // p.background(8, 3, 30, 50);
+                p.background(255, 0, 0)
+                p.image(sky, 0, 0, sky.width, sky.height);
+
+                cursorGlow.ease();
+                cursorGlow.glow();
+
 
                 for (const star of stars) {
                     star.update();
@@ -32,11 +117,85 @@ export default function StarField() {
                 }
             }
 
+            p.mouseMoved = () => {
+                cursorGlow.pulse();
+            }
+
             p.mousePressed = () => {
+
+                if (cursorGlow) {
+                    cursorGlow.brighten()
+                }
+
                 for (const star of stars) {
                     if (star.isClicked(p.mouseX, p.mouseY)) {
                         console.log("Star clicked at:", star.x, star.y);
+                        if (!showStar) {
+                            fetchRandomStar();
+                        }
                         break;
+                    }
+                }
+            }
+
+
+
+            class CursorGlow implements P5CursorGlow {
+                x: number
+                y: number
+                targetX: number
+                targetY: number
+                size: number
+                easing: number
+                p: p5
+
+                constructor(p: p5) {
+                    this.p = p
+                    this.x = p.mouseX
+                    this.y = p.mouseY
+                    this.targetX = p.mouseX
+                    this.targetY = p.mouseY
+                    this.size = 24
+                    this.easing = 0.15
+                }
+
+                ease(): void {
+                    this.targetX = p.mouseX;
+                    this.targetY = p.mouseY;
+
+                    this.x += (this.targetX - this.x) * this.easing;
+                    this.y += (this.targetY - this.y) * this.easing;
+                }
+
+                glow(): void {
+                    p.push();
+
+                    const maxRadius = this.size * 4;
+                    const minRadius = 1;
+                    const steps = 40;
+
+                    p.noStroke();
+
+                    for (let i = 0; i < steps; i++) {
+                        const r = p.map(i, 0, steps, maxRadius, minRadius);
+                        const t = i / steps;
+                        const easedT = t * t * t;
+                        const alpha = p.map(easedT, 0, 1, 2, 1);
+
+                        p.fill(255, 255, 255, alpha);
+                        p.ellipse(this.x, this.y, r);
+                    }
+
+                    p.pop();
+                }
+
+                pulse(): void {
+                    this.size += (24 - this.size) * 0.1;
+                }
+
+                brighten(): void {
+                    if (this.size < 40) {
+                        this.size += 4
                     }
                 }
             }
@@ -106,18 +265,18 @@ export default function StarField() {
                         this.p.line(-glowRadius, 0, glowRadius, 0)
                     }
 
-                    this.drawStar(0, 0, this.size, this.size)
+                    this.drawStar(0, 0, this.size)
                     this.p.pop()
                 }
 
-                drawStar(x: number, y: number, radius1: number, radius2: number) {
+                drawStar(x: number, y: number, radius: number) {
                     this.p.strokeWeight(1)
                     this.p.stroke(255, this.alpha)
 
-                    this.p.line(x, y - radius1, x, y + radius1)
-                    this.p.line(x - radius1, y, x + radius1, y)
+                    this.p.line(x, y - radius, x, y + radius)
+                    this.p.line(x - radius, y, x + radius, y)
 
-                    const diagRadius = radius1 * 0.2
+                    const diagRadius = radius * 0.2
                     this.p.line(x - diagRadius, y - diagRadius, x + diagRadius, y + diagRadius)
                     this.p.line(x - diagRadius, y + diagRadius, x + diagRadius, y - diagRadius)
                 }
@@ -132,9 +291,19 @@ export default function StarField() {
         return () => {
             p5Instance.remove()
         }
-    }, [])
+    }, [fetchRandomStar, showStar])
 
     return (
-        <div ref={sketchRef} />
+        <>
+            {
+                star && showStar &&
+                (< Star
+                    star={star}
+                    visibility={isVisible}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)} />)
+            }
+            <div ref={sketchRef} />
+        </>
     )
 }
