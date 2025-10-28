@@ -1,4 +1,4 @@
-import { StarData } from "../types/misc";
+import { StarMessageData } from "../types/misc";
 
 export const getRandomStar = async () => {
     try {
@@ -15,7 +15,7 @@ export const getRandomStar = async () => {
 
         const data = await response.json();
 
-        return data.star as StarData;
+        return data.star as StarMessageData;
     } catch (error) {
         console.error("⚠️ error fetching random star:", error);
         return null;

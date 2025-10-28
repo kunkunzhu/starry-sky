@@ -1,5 +1,5 @@
 import { Client } from '@notionhq/client';
-import { StarData } from '../types/misc';
+import { StarMessageData } from '../types/misc';
 import { NotionPage } from '../types/notion';
 
 const notion = new Client({
@@ -8,7 +8,7 @@ const notion = new Client({
 
 export class NotionService {
 
-    async getStarData(starId: string): Promise<StarData | null> {
+    async getStarData(starId: string): Promise<StarMessageData | null> {
         try {
             const response = await notion.pages.retrieve({ page_id: starId });
             const star = (response as NotionPage).properties

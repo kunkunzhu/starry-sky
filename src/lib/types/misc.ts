@@ -16,7 +16,7 @@ export interface P5Star {
     drawStar(x: number, y: number, radius1: number, radius2: number): void
 }
 
-export interface StarData {
+export interface StarMessageData {
     id: string
     title: string
     message: string
@@ -43,4 +43,9 @@ export interface P5CursorGlow {
     glow: () => void
     pulse: () => void
     brighten: () => void
+}
+
+export interface LocationCoords {
+    lat: number
+    long: number
 }

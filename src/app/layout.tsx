@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import { Fragment_Mono } from "next/font/google";
+import { Unna } from "next/font/google";
 import "./globals.css";
 
-const fragmentMono = Fragment_Mono({
-  variable: "--font-fragment",
+
+const unna = Unna({
+  variable: "--font-unna",
   weight: "400",
   subsets: ["latin"],
-});
+})
 
 export const metadata: Metadata = {
   title: "starry sky",
@@ -20,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${fragmentMono.className} w-screen h-screen overflow-hidden text-star bg-night`}>
+      <body className={`${unna.className} w-screen h-screen overflow-hidden text-star`}>
         {children}
       </body>
     </html >

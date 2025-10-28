@@ -1,13 +1,13 @@
-import { StarData } from "@/lib/types/misc";
+import { StarMessageData } from "@/lib/types/misc";
 
-interface StarProps {
-    star: StarData,
+interface StarMessageProps {
+    star: StarMessageData,
     visibility: boolean,
     onMouseEnter: () => void,
     onMouseLeave: () => void
 }
 
-export default function Star({ star, visibility, onMouseEnter, onMouseLeave }: StarProps) {
+export default function StarMessage({ star, visibility, onMouseEnter, onMouseLeave }: StarMessageProps) {
     return (
         <div
             className={`transition-all duration-700 ${visibility ? 'opacity-100' : 'opacity-0'}`}
