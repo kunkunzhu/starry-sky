@@ -26,7 +26,6 @@ export default function Field({ skyMode, glow = true }: { skyMode: SkyMode, glow
             }
 
             p.draw = () => {
-                p.background(255, 0, 0)
                 p.image(sky, 0, 0, sky.width, sky.height);
 
                 if (glow) {

@@ -95,7 +95,6 @@ export default function StarField() {
 
                 for (const star of stars) {
                     if (star.isClicked(p.mouseX, p.mouseY)) {
-                        console.log("Star clicked at:", star.x, star.y);
                         if (!showStar) {
                             fetchRandomStar();
                         }

@@ -13,7 +13,7 @@ export const SKY_MODES: Record<SkyMode, SkyConfig> = {
 
     day: {
         topColor: { r: 78, g: 191, b: 237 },
-        bottomColor: { r: 142, g: 199, b: 245 },
+        bottomColor: { r: 175, g: 216, b: 250 },
     },
 
     sunset: {

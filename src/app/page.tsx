@@ -36,7 +36,6 @@ export default function Home() {
       navigator.geolocation.getCurrentPosition(({ coords }) => {
         const { latitude, longitude } = coords;
         setLocation({ lat: latitude, long: longitude });
-        console.log('User coordinates:', latitude, longitude);
       })
     }
   }, []);
@@ -48,7 +47,6 @@ export default function Home() {
 
   useEffect(() => {
     const skyMode = getSkyMode({ currentTime, location });
-    console.log('Sky mode updated to:', skyMode);
     setSkyMode(skyMode);
   }, [location, currentTime]);
 

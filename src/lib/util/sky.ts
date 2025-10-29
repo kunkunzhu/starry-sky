@@ -31,7 +31,7 @@ export function getSkyMode({ currentTime, location }: SkyParams): SkyMode {
         return 'sunset';
     } else if (currentTime >= dusk && currentTime < night) {
         return 'twilight';
-    } else if (currentTime >= night && currentTime < nightEnd) {
+    } else if (currentTime >= night || currentTime < nightEnd) {
         return 'night';
     } else if (currentTime >= nightEnd && currentTime < nauticalDawn) {
         return 'dawn';
