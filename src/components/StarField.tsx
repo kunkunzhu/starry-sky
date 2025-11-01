@@ -12,10 +12,24 @@ import { createSky } from '@/lib/p5/Sky';
 export default function StarField() {
     const sketchRef = useRef<HTMLDivElement>(null)
 
+    const [isClient, setIsClient] = useState(false)
+
     const [star, setStar] = useState<StarMessageData | null>(null)
     const [showStar, setShowStar] = useState<boolean>(false)
     const [isVisible, setIsVisible] = useState<boolean>(false)
     const [isHovered, setIsHovered] = useState<boolean>(false)
+
+    const showStarRef = useRef(showStar)
+
+    useEffect(() => {
+        showStarRef.current = showStar
+    }, [showStar])
+
+    // client-side check :
+
+    useEffect(() => {
+        setIsClient(true)
+    }, [])
 
     // star fetching :
 
@@ -73,7 +87,8 @@ export default function StarField() {
             }
 
             p.draw = () => {
-                p.image(sky, 0, 0, sky.width, sky.height);
+                p.background(8, 3, 30)
+                p.image(sky, 0, 0);
 
                 cursorGlow.ease();
                 cursorGlow.glow();
@@ -95,7 +110,7 @@ export default function StarField() {
 
                 for (const star of stars) {
                     if (star.isClicked(p.mouseX, p.mouseY)) {
-                        if (!showStar) {
+                        if (!showStarRef.current) {
                             fetchRandomStar();
                         }
                         break;
@@ -113,7 +128,23 @@ export default function StarField() {
             p5Instance.remove()
         }
 
-    }, [fetchRandomStar, showStar])
+    }, [isClient])
+
+    if (!isClient) {
+        return (
+            <div style={{
+                width: '100vw',
+                height: '100vh',
+                background: 'rgb(8, 3, 30)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white'
+            }}>
+                ˖.𖥔 ݁ ˖ ⊹ ࣪ ˖
+            </div>
+        )
+    }
 
     return (
         <>

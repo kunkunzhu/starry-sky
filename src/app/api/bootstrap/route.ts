@@ -23,3 +23,25 @@ export async function POST() {
         );
     }
 }
+
+export async function GET() {
+    try {
+        const indexService = new IndexService();
+        const stars = await indexService.getStarList();
+
+        return NextResponse.json({
+            success: true,
+            count: stars.length,
+            posts: stars.map(star => ({
+                id: star.id,
+                title: star.title,
+                message: star.message
+            })),
+        });
+    } catch (error) {
+        return NextResponse.json(
+            { success: false, error: `⚠️ failed to get stars, ${error}` },
+            { status: 500 }
+        );
+    }
+}
